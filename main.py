@@ -5,14 +5,7 @@ from routes import garages, cars, maintenance
 
 app=FastAPI()
 
-@app.get("/info")
-def info():
-    return{"version": "0.1"}
-
-@app.get("/")
-def home():
-    return {"message": "Home page, test"}
-
+# Moved middleware first for clarity
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -20,6 +13,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/info")
+def info():
+    return{"version": "0.1"}
+
+@app.get("/")
+def home():
+    return {"message": "Home page, test"}
 
 app.include_router(garages.router, prefix="/garages", tags=["Garages"])
 app.include_router(cars.router, prefix="/cars", tags=["Cars"])

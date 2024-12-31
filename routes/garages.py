@@ -1,9 +1,12 @@
 from constants import get_db
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from datetime import date
+from fastapi.responses import JSONResponse
 
 from models import Car, Garage, Maintenance
-from pydantic_models import GarageValidation
+from pydantic_models import GarageValidation, GarageAvailabilityReport
+from routes.reports import build_daily_report
 
 router = APIRouter()
 
@@ -14,6 +17,28 @@ def create_garage(garage: GarageValidation, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_garage)
     return new_garage
+
+@router.get("/dailyAvailabilityReport", response_model=GarageAvailabilityReport)
+def garage_report(
+    garageId: int,
+    startDate: date,
+    endDate: date,
+    db: Session = Depends(get_db),
+):
+    garage = db.query(Garage).filter(Garage.id == garageId).first()
+    if not garage:
+        raise HTTPException(status_code=404, detail="Garage not found")
+
+    maintenances = (
+        db.query(Maintenance)
+        .filter(Maintenance.garageId == garageId)
+        .filter(Maintenance.scheduledDate >= startDate)
+        .filter(Maintenance.scheduledDate <= endDate)
+        .all()
+    )
+
+    report = build_daily_report(maintenances, garage.capacity)
+    return JSONResponse(content=report, status_code=200)
 
 @router.get("/{garage_id}", response_model=GarageValidation)
 def retrieve_garage(garage_id: int, db: Session = Depends(get_db)):
