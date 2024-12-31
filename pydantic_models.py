@@ -15,7 +15,7 @@ class GarageValidation(BaseModel):
 class GarageAvailabilityReport(BaseModel):
     date: date
     requests: int
-    available_capacity: int
+    availableCapacity: int
 
     class Config:
         from_attributes = True
@@ -24,9 +24,9 @@ class GarageAvailabilityReport(BaseModel):
 class CarValidationPOST(BaseModel):
     make: str
     model: str
-    production_year: int
-    license_plate: str
-    garage_ids: list[int]
+    productionYear: int
+    licensePlate: str
+    garageIds: list[int]
 
     class Config:
         from_attributes = True
@@ -36,8 +36,8 @@ class CarValidationGET(BaseModel):
     id: int
     make: str
     model: str
-    production_year: int
-    license_plate: str
+    productionYear: int
+    licensePlate: str
     garages: list["GarageValidation"]
 
     class Config:
@@ -46,22 +46,22 @@ class CarValidationGET(BaseModel):
 
 class MaintenanceValidationGET(BaseModel):
     id: int
-    car_id: int
-    car_name: str
-    service_type: str
-    scheduled_date: date
-    garage_id: int
-    garage_name: str
+    carId: int
+    carName: str
+    serviceType: str
+    scheduledDate: date
+    garageId: int
+    garageName: str
 
     class Config:
         from_attributes = True
 
 
 class MaintenanceValidationPOST(BaseModel):
-    car_id: int
-    garage_id: int
-    scheduled_date: date
-    service_type: str
+    carId: int
+    garageId: int
+    scheduledDate: date
+    serviceType: str
 
     class Config:
         from_attributes = True
@@ -70,10 +70,10 @@ class MaintenanceValidationPOST(BaseModel):
 class YearMonth(BaseModel):
     year: int
     month: str
-    leap_year: bool
-    month_value: int
+    leapYear: bool
+    monthValue: int
 
 
 class MaintenanceMonthlyRequestsReport(BaseModel):
-    year_month: YearMonth
+    yearMonth: YearMonth
     requests: int
